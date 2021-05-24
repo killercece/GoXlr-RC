@@ -38,7 +38,7 @@ function createWindow() {
 
   mainWindow = new BrowserWindow({ width: 400, height: 870, webPreferences: { nodeIntegration: true }});
   mainWindow.setMenu(null)
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
   mainWindow.loadURL(
     isDev
       ? "http://localhost:3000"
@@ -69,6 +69,7 @@ function startWebsocket(port) {
     addLog("[WS] GoXLR connected");
     goxlrIsConnected = true;
     webS = socket;
+    setProfile(store.get('params').profile)
   });
 }
 
@@ -188,7 +189,23 @@ ipcMain.on('save-params', function (event, form) {
 });
 
 ipcMain.on('get-params', function (event, form) {
-  event.returnValue =  store.get('params');
+  var params =  store.get('params');
+  if(params){
+    event.returnValue =  store.get('params');
+  }
+  else {
+    params = {
+      startup: false,
+      popup: false,
+      broker: "",
+      username: "",
+      password: "",
+      topic: "",
+      path: "",
+      profile: ""
+  };
+  event.returnValue =  params;
+  }
   //console.log("Get params get")
 });
 
